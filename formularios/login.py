@@ -130,7 +130,7 @@ class app(ctk.CTk):
         )
         self.contraseña.configure(show = "*")
 
-        self.buttoninicio = ctk.CTkButton(self.frame_principal, text = "Iniciar Sesion", fg_color = 'black', height = 35, command = self.verificar)
+        self.buttoninicio = ctk.CTkButton(self.frame_principal, text = "Iniciar Sesion", fg_color = COLOR_MENU_LATERAL, height = 35, command = self.verificar)
         self.buttoninicio.pack(pady = 30)
         self.buttoninicio.bind("<Return>", (lambda event:self.verificar()))
         
