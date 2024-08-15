@@ -1,11 +1,83 @@
-# aca hacemos todo el diseño
 import tkinter as tk
-from tkinter import font
+from tkinter import font as tkfont
+from enum import Enum
 from config import *
 import util.util_imagenes as util_img
 import util.util_ventana as util_ventana
 from formularios.screens import billing_point
 from formularios.undefinedscreen import UndefinedScreen
+
+class Side(Enum):
+    TOP = 1
+    RIGHT = 2
+    BOTTOM = 3
+    LEFT = 3
+
+class ControlLabel(tk.Frame):
+    def __init__(self, parent, *args, text="", **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+
+        self._inner_label = tk.Label(self, text=text, bg=kwargs.get("bg", ""))
+        self._inner_label.pack(fill=tk.BOTH, expand=True)
+        self.pack_propagate(0)
+
+        label_font = tkfont.Font(font=self._inner_label["font"])
+        text_width = label_font.measure(text)
+        text_height = label_font.metrics('linespace')
+
+        self._min_height = max(kwargs.get("height", text_height), text_height)
+        self._min_width = max(kwargs.get("width", text_width), text_width)
+        self.configure(height=self._min_height, width=self._min_width)
+
+        self.max_side_trigger_dist = 5
+
+        self._start_x = 0
+        self._start_y = 0
+        self._start_height = 0
+        self._start_width = 0
+        self._clicked_side = None
+
+        self._inner_label.bind("<Motion>", self.on_mouse_move)
+        self._inner_label.bind("<B1-Motion>", self.on_mouse_drag)
+
+    def on_mouse_drag(self, event):
+        x = self.winfo_x()
+        y = self.winfo_y()
+        height = self.winfo_height()
+
+        match self._clicked_side:
+            case Side.TOP:
+                bottom_left_y = height + y
+                height = min(max(self._min_height, height - event.y), bottom_left_y)
+                y = bottom_left_y - height
+            case Side.BOTTOM:
+                height = min(max(self._min_height, event.y), self.parent.winfo_height() - y)
+            case _:
+                max_x = self.parent.winfo_width() - self._start_width
+                max_y = self.parent.winfo_height() - self._start_height
+                x = min(max(0, x - self._start_x + event.x), max_x)
+                y = min(max(0, y - self._start_y + event.y), max_y)
+
+        self.place(x=x, y=y, height=height)
+        
+    def on_mouse_move(self, event):
+        self._start_x = event.x
+        self._start_y = event.y
+        self._start_width = self.winfo_width()
+        self._start_height = self.winfo_height()
+
+        # Verificar si el click fue en esquinas
+        if event.y <= self.max_side_trigger_dist:
+            self._clicked_side = Side.TOP
+            self.configure(cursor="top_side")
+
+        elif event.y >= self._start_height - self.max_side_trigger_dist:
+            self._clicked_side = Side.BOTTOM
+            self.configure(cursor="bottom_side")
+        else:
+            self._clicked_side = None
+            self.configure(cursor="hand1")
 
 
 class principalscreen(tk.Tk):
@@ -58,7 +130,7 @@ class principalscreen(tk.Tk):
             )
 
     def topbar_controls (self):
-        font_awesome = font.Font(family='FontAwesome', size=12) 
+        font_awesome = tkfont.Font(family='FontAwesome', size=12) 
         
         self.labelTitle = tk.Label(self.top_bar, text="LABS")
         self.labelTitle.config(fg = "#fff", 
@@ -89,7 +161,7 @@ class principalscreen(tk.Tk):
     def sidebar_menu_controls (self):
         width_menu = 20
         heigth_menu = 2
-        font_awesome = font.Font(family='FontAwesome', size=15)
+        font_awesome = tkfont.Font(family='FontAwesome', size=15)
         #imagenes como etiquetas
         self.labelperfil = tk.Label(
             self.side_menu, 
@@ -118,64 +190,16 @@ class principalscreen(tk.Tk):
         for text, icon, button, cmd in buttons_info:
             self.config_button_menu(button, text, icon, font_awesome, width_menu, heigth_menu, cmd)
 
+    
     def principal_body_controls(self):
-        self.screen_cleaner(self.principal_body)
-        self.label = tk.Label(self.principal_body, bg="green", width=30, height=3)
-        self.label.place(x=0, y=0)
-
-        def arrastrar(event):
-            self.label.startX = event.x
-            self.label.startY = event.y
-
-        def arrastrar2(event):
-            x = self.label.winfo_x() - self.label.startX + event.x
-            y = self.label.winfo_y() - self.label.startY + event.y
-
-            # Obtiene las dimensiones del frame principal
-            frame_width = self.principal_body.winfo_width()
-            frame_height = self.principal_body.winfo_height()
-            
-            # Obtiene las dimensiones del widget
-            widget_width = self.label.winfo_width()
-            widget_height = self.label.winfo_height()
-
-            # Limita el movimiento dentro del frame
-            if 0 <= x <= frame_width - widget_width and 0 <= y <= frame_height - widget_height:
-                self.label.place(x=x, y=y)
-
-        def clic(event):
-            # Almacena la posición inicial del clic y el tamaño inicial del widget
-            self.label.startX = event.x
-            self.label.startY = event.y
-            self.label.startY_root = event.y_root
-            self.initial_width = self.label.winfo_width()
-            self.initial_height = self.label.winfo_height()
-            
-        def resize(event):
-            # Obtiene la posición actual del ratón
-            current_y = event.y_root
-
-            # Calcula el cambio en la altura
-            delta_y = current_y - self.label.startY_root
-
-            # Calcula la nueva altura
-            new_height = max(self.initial_height + delta_y - self.label.startY, 10)
-
-            # Actualiza la altura del label
-            self.label.configure(height=new_height)
-
-            # Actualiza la posición inicial del ratón
-            self.label.startY_root = current_y
-
-
-                
-        
-        self.label.bind("<Button-1>", arrastrar)
-        self.label.bind("<B1-Motion>", arrastrar2)
-
-        # Agrega el evento de redimensionamiento a los bordes de la etiqueta
-        self.label.bind("<Button-1>",  clic)
-        self.label.bind("<B1-Motion>", resize, add="+")
+        self.control_label = ControlLabel(
+            self.principal_body,
+            text="Stack Overflow en Español",
+            bg="green",
+            width=300,
+            height=30
+            )
+        self.control_label.place(x=100, y=100)
     
     def config_button_menu(self, button, text, icon, font_awesome, width_menu, height_menu, cmd):
 
