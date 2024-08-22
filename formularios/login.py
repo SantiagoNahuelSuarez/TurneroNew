@@ -1,19 +1,20 @@
 #Ventana de Login
 
-from tkinter import messagebox
 import customtkinter as ctk
+from tkinter import messagebox 
+from formularios.Manager import principalscreen
 from config import *
 from formularios.screens import billing_point
 import util.util_imagenes as utl_imagenes
 import util.util_ventana as utl_ventana
-from formularios.Manager import principalscreen
-
-ctk.set_appearance_mode("system")
-ctk.set_default_color_theme("blue") 
 
 
-class app(ctk.CTk): 
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("green") 
 
+
+class app(ctk.CTk):
+    
     def verificar(self):
 
         user = self.usuario.get()
@@ -22,116 +23,180 @@ class app(ctk.CTk):
         if(user == 'Root' and password == "1234"):
 
             self.destroy()
-
-
+            
             principalscreen()
         else:
             messagebox.showerror(message = "La contraseña no es correcta", title = "Mensaje")
 
+    
+     
+
     def __init__(self):
 
         super().__init__()
-        self.logo = utl_imagenes.leer_imagen("./imagenes/Logo.png", (500, 350))
+        self.logo = utl_imagenes.leer_imagen("./imagenes/Logo.png", (600, 350))
         self.config_window()
         self.frames()
         self.labels()
         self.entrys()
+        self.buttoms()
 
     def config_window(self):
         self.title('Login')
         self.iconbitmap("./imagenes/logo.ico")
-        self.corner_radius = 10
-        w, h = 700, 400
-        utl_ventana.centrar_ventana(self, w, h)
+        self.geometry("500x600+350+20")
+        self.minsize(480, 500)
+        self.config(bg = '#010101')
 
+    
     def frames(self):
-        self.framelogo = ctk.CTkFrame(
-            master = self, 
-            width = 400,
-        )
-        self.framelogo.pack(
-            side = "left",
-            expand = ctk.NO,
-            fill = ctk.BOTH
-        )
 
         self.frame_principal = ctk.CTkFrame(
             master = self, 
-            fg_color = "#261920",
+            fg_color = "#010101",
             corner_radius = 10 
         )
         self.frame_principal.pack(
-            side = "right", 
             expand = True, 
             fill = ctk.BOTH
         )
+
+        self.contraseña_frame = ctk.CTkFrame(self.frame_principal, fg_color="transparent")
+        self.contraseña_frame.grid(
+            columnspan = 2, 
+            row = 2,
+            padx = 4, 
+            pady = 20,
+            sticky = "n"
+        )
+
+        self.usuario_frame = ctk.CTkFrame(self.frame_principal, fg_color="transparent")
+        self.usuario_frame.grid(
+            columnspan = 2, 
+            row = 1,
+            padx = 4, 
+            pady = 20,
+            sticky = "n"
+        )
+
+
         self.frame_principal.grid_columnconfigure(0, weight = 1)
-        
+        self.frame_principal.grid_rowconfigure(0, weight = 1)
 
     def labels (self):
+
+        font_awesome = ctk.CTkFont(family = 'FontAwesome', size = 14)
+        
         self.label_logo = ctk.CTkLabel(
-            self.framelogo, 
+            self.frame_principal, 
             text = "", 
             image = self.logo, 
         )
-        self.label_logo.place(
-            x = 0, y = 0, 
-            relwidth = 1, 
-            relheight = 1
+        self.label_logo.grid(
+            sticky = "n",
+            columnspan=2, 
+            row = 0,
+            pady = 30
         )
 
-        self.labelTitle = ctk.CTkLabel(
-            self.frame_principal, 
-            text = "Welcome",
-            text_color = "#2D5559",
-            font = ctk.CTkFont(family = 'Times New Roman',size = 26, weight = "bold"), 
-            
+        self.iconoUser = ctk.CTkLabel(
+            self.usuario_frame,
+            font = font_awesome,
+            text = "\uf007",
+            fg_color = "transparent",
+            width = 30 
         )
-        self.labelTitle.grid(
-            row=2, column=0, padx=20, pady=40, sticky="n"
-        )
+        self.iconoUser.pack(side="left", padx=(0, 5))  # Padding para separar el ícono del texto
 
-        self.lablelTitle_2 = ctk.CTkLabel(
-            self.frame_principal, 
-            text = "Iniciar Sesión",
-            text_color = "#EEEEEE", 
-            font = ctk.CTkFont('Cambria', 20), 
+        self.iconContraseña = ctk.CTkLabel(
+            self.contraseña_frame,
+            font = font_awesome,
+            text = "\uf023",
+            fg_color = "transparent",
+            corner_radius = 10,
+            width = 30  
         )
-        self.lablelTitle_2.grid(
-            row=4, column=0, padx = 20, pady = 20, sticky="w"
-        )
+        self.iconContraseña.pack(side="left", padx=(0, 5))
 
     def entrys (self):
+
+        font_awesome = ctk.CTkFont(family = 'FontAwesome', size = 14)
+
         self.usuario = ctk.CTkEntry(
-            self.frame_principal, 
-            font = ('Baskerville', 14), 
+            self.usuario_frame, 
+            font = ctk.CTkFont(family="Arial", size=14),
             placeholder_text = "Usuario",
             fg_color = "#261920",
-            corner_radius = 10, 
-            width = 300
+            corner_radius = 20, 
+            height = 40,
+            width = 220,  
+            justify = "left"
         )
-        self.usuario.grid(
-            row=6, column=0, padx=20, pady = 20, sticky="ew"
-        )
+        self.usuario.pack(side="top")
+        
 
         self.contraseña = ctk.CTkEntry(
-            self.frame_principal, 
-            font = ('Baskerville', 14), 
+            self.contraseña_frame, 
+            font = ctk.CTkFont(family="Arial", size=14),
             placeholder_text = "Contraseña",
             fg_color = "#261920",
-            corner_radius = 10, 
-            width = 300
+            corner_radius = 20,
+            height = 40, 
+            width = 220,  # Ajusta el ancho del Entry
+            justify="left",
+            show="*"
         )
-        self.contraseña.grid(
-            row=8, column=0, padx=20, pady = 20, sticky="ew"
-        )
-        self.contraseña.configure(show = "*")
+        self.contraseña.pack(side="left")
 
-        self.buttoninicio = ctk.CTkButton(self.frame_principal, text = "Iniciar Sesion", corner_radius=10, fg_color = "#2D5559", height = 35, command = self.verificar)
-        self.buttoninicio.grid(row=10, column=0, padx=20, pady=30, sticky="s")
+
+    def buttoms(self):
+        font_awesome = ctk.CTkFont(family = 'FontAwesome', size = 14)
+
+        def mostrar():
+            if  self.contraseña.cget("show") == "*":
+                self.contraseña.configure(show="")
+                self.buttonVer.configure(text="\uf070")
+            else:
+                self.contraseña.configure(show="*")
+                self.buttonVer.configure(text="\uf06e")
+
+        self.buttonVer = ctk.CTkButton(
+            self.contraseña,
+            font = font_awesome,
+            text = "\uf06e",
+            width = 5,
+            corner_radius = 10,
+            fg_color = "transparent",
+            command=mostrar
+        )
+        self.buttonVer.place(
+            relx = 1.0,
+            rely = 0.04,
+            x = -47,
+            y = 4
+        )
+        
+
+        self.buttoninicio = ctk.CTkButton(
+            self.frame_principal, 
+            text = "Iniciar Sesion", 
+            corner_radius = 20, 
+            font = font_awesome, 
+            height = 35, 
+            command = self.verificar
+        )
+        self.buttoninicio.grid(
+            row = 4, 
+            column = 0, 
+            padx = 20, 
+            pady = 50, 
+            sticky = "n"              
+        )
         self.buttoninicio.bind("<Return>", (lambda event:self.verificar()))
         
         self.mainloop()
+
+        
 
 
     
