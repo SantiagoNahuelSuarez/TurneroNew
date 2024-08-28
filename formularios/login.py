@@ -9,8 +9,9 @@ import util.util_imagenes as utl_imagenes
 import util.util_ventana as utl_ventana
 
 
+
 ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("green") 
+ctk.set_default_color_theme("blue") 
 
 
 class app(ctk.CTk):
@@ -44,8 +45,8 @@ class app(ctk.CTk):
     def config_window(self):
         self.title('Login')
         self.iconbitmap("./imagenes/logo.ico")
-        self.geometry("500x600+350+20")
-        self.minsize(480, 500)
+        w, h = 500, 600
+        utl_ventana.centrar_ventana(self, w, h)
         self.config(bg = '#010101')
 
     
@@ -53,7 +54,7 @@ class app(ctk.CTk):
 
         self.frame_principal = ctk.CTkFrame(
             master = self, 
-            fg_color = "#010101",
+            fg_color = COLOR_BARRA_SUPERIOR,
             corner_radius = 10 
         )
         self.frame_principal.pack(
@@ -126,7 +127,8 @@ class app(ctk.CTk):
             self.usuario_frame, 
             font = ctk.CTkFont(family="Arial", size=14),
             placeholder_text = "Usuario",
-            fg_color = "#261920",
+            fg_color = COLOR_GRIS_PASTEL_FRAMES,
+            text_color = COLOR_BARRA_SUPERIOR,
             corner_radius = 20, 
             height = 40,
             width = 220,  
@@ -139,7 +141,8 @@ class app(ctk.CTk):
             self.contraseña_frame, 
             font = ctk.CTkFont(family="Arial", size=14),
             placeholder_text = "Contraseña",
-            fg_color = "#261920",
+            fg_color = COLOR_GRIS_PASTEL_FRAMES,
+            text_color = COLOR_BARRA_SUPERIOR,
             corner_radius = 20,
             height = 40, 
             width = 220,  # Ajusta el ancho del Entry
@@ -150,6 +153,7 @@ class app(ctk.CTk):
 
 
     def buttoms(self):
+        
         font_awesome = ctk.CTkFont(family = 'FontAwesome', size = 14)
 
         def mostrar():
@@ -166,6 +170,8 @@ class app(ctk.CTk):
             text = "\uf06e",
             width = 5,
             corner_radius = 10,
+            text_color = COLOR_BARRA_SUPERIOR,
+            hover = False,
             fg_color = "transparent",
             command=mostrar
         )
@@ -181,7 +187,8 @@ class app(ctk.CTk):
             self.frame_principal, 
             text = "Iniciar Sesion", 
             corner_radius = 20, 
-            font = font_awesome, 
+            font = font_awesome,
+            fg_color = COLOR_AZUL_BOTONES, 
             height = 35, 
             command = self.verificar
         )
