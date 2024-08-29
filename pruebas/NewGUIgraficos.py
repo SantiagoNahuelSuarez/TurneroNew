@@ -1,5 +1,8 @@
 import customtkinter as ctk
 import matplotlib.pyplot as plt
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from config import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -12,8 +15,11 @@ class Graficos(ctk.CTk):
         super().__init__()
         self.config_windows()
         self.frames()
+        self.labels()
+        self.inputus_marker()
         self.checkboxes()
         self.setup_mpl_style()
+        self.buttoms()
 
     def config_windows(self):
         self.title("Graficos")
@@ -22,55 +28,104 @@ class Graficos(ctk.CTk):
     def frames(self):
 
         self.menu_frame = ctk.CTkFrame(
-            self, 
-            width = 250, 
+            self,  
             corner_radius = 20,
             fg_color = COLOR_BARRA_SUPERIOR 
         )
         self.menu_frame.pack(side="bottom", expand = False, fill=ctk.BOTH)
         
         self.grafico_frame = ctk.CTkFrame(
-            self, 
-            fg_color = COLOR_CUERPO_PRINCIPAL, 
-            corner_radius = 20
+             self, 
+             fg_color = "#1a1a1a", 
+             corner_radius = 10
         )
         self.grafico_frame.pack(side="right", expand = True, fill=ctk.BOTH)
 
         self.menu_lateral = ctk.CTkFrame(
             self,
-            height = 250,
-            corner_radius = 20,
+            
+            corner_radius = 10,
             fg_color = COLOR_GRIS_PASTEL_FRAMES
         )
-        self.menu_lateral.pack(side = "left", expand = False, fill = ctk.BOTH )
-        
+        self.menu_lateral.pack(side = "left", fill = ctk.BOTH)
+
+
+    def labels(self):
+
+        self.label_datos = ctk.CTkLabel(
+        self.menu_lateral,
+        fg_color="transparent",
+        text="Datos Estadisticos a seleccionar: ",
+        text_color=COLOR_GRIS_PASTEL_OSCURO
+        )
+        self.label_datos.grid(row=0, column=0, pady=(20, 5), padx=10, sticky="n")
+
+        self.label_select = ctk.CTkLabel(
+            self.menu_lateral,
+            fg_color="transparent",
+            text="Seleccionar grafico: ",
+            text_color=COLOR_GRIS_PASTEL_OSCURO
+        )
+        self.label_select.grid(row=2, column=0, pady=(50, 5), padx=10, sticky="w")
+
+    def inputus_marker(self):
+        self.service_choice = ctk.CTkOptionMenu(
+            self.menu_lateral,
+            values=['Ganancias por servicios', 'Ganancias por productos', "Ganancias totales"],
+            width=200,
+            height=20,
+            fg_color=COLOR_CUERPO_PRINCIPAL,
+            text_color = COLOR_GRIS_PASTEL_OSCURO,
+            button_color = COLOR_AZUL_BOTONES,
+            dropdown_fg_color = COLOR_CUERPO_PRINCIPAL,
+            dropdown_text_color = COLOR_GRIS_PASTEL_OSCURO,
+            variable=ctk.StringVar(value='Elija los datos a graficar :')
+        )
+        self.service_choice.grid(row=1, column=0, pady=(5, 50), padx=10, sticky="n")
+
     def checkboxes(self):
         
         self.check_grafLine = ctk.CTkCheckBox(
-            self.menu_frame, 
-            text="Grafico de Línea"
+            self.menu_lateral,
+            text="Gráfico de Línea",
+            text_color=COLOR_GRIS_PASTEL_OSCURO
         )
-        self.check_grafLine.grid(row = 0, column = 0, pady = 10, padx = 30, sticky="e")
+        self.check_grafLine.grid(row=3, column=0, pady=(10, 5), padx=30, sticky="w")
 
         self.check_grafBarra = ctk.CTkCheckBox(
-            self.menu_frame, 
-            text = "Grafico de Barra"
+            self.menu_lateral,
+            text="Gráfico de Barra",
+            text_color=COLOR_GRIS_PASTEL_OSCURO
         )
-        self.check_grafBarra.grid(row = 0, column = 1, pady = 10, padx = 30, sticky="e")
+        self.check_grafBarra.grid(row=4, column=0, pady=5, padx=30, sticky="w")
 
         self.check_grafTorta = ctk.CTkCheckBox(
-            self.menu_frame, 
-            text = "Grafico de Torta"
+            self.menu_lateral,
+            text="Gráfico de Torta",
+            text_color=COLOR_GRIS_PASTEL_OSCURO
         )
-        self.check_grafTorta.grid(row = 0, column = 2, pady = 10, padx = 30, sticky = "e")
+        self.check_grafTorta.grid(row=5, column=0, pady=(5, 20), padx=30, sticky="w")
 
-        self.buttom_Genearar = ctk.CTkButton(
-            self.menu_frame, 
-            text = "Generar Grafico", 
-            command = self.generar_grafico,
-            corner_radius = 15
+    def buttoms (self):
+
+        self.buttom_Generar = ctk.CTkButton(
+            self.menu_frame,
+            text="Generar Gráfico",
+            fg_color=COLOR_AZUL_BOTONES,
+            command=self.generar_grafico,
+            corner_radius=15
         )
-        self.buttom_Genearar.grid(row = 0, column = 3, pady = 20, padx = 30, sticky="w")
+        self.buttom_Generar.pack(side = "left", pady=20, padx=30)
+
+        self.buttom_imprimir = ctk.CTkButton(
+            self.menu_frame,
+            text="Imprimir",
+            fg_color=COLOR_AZUL_BOTONES,
+            corner_radius=15
+        )
+        self.buttom_imprimir.pack(side = "right", pady=20, padx=30)
+
+
     
     def setup_mpl_style(self):
         # Aplicar un estilo moderno
@@ -88,9 +143,11 @@ class Graficos(ctk.CTk):
         # Limpiar el frame antes de dibujar un nuevo gráfico
         for widget in self.grafico_frame.winfo_children():
             widget.destroy()
-        
+            
+        self.grafico_frame.update()
         # Generar un gráfico de ejemplo basado en los checkboxes
         fig, ax = plt.subplots(figsize=(5, 4), dpi=100)
+        
         
         if self.check_grafLine.get():
             ax.plot([1, 2, 3], [1, 4, 9], label='Línea', color='#ff6f61', linewidth=2.5)
@@ -100,7 +157,7 @@ class Graficos(ctk.CTk):
 
         if self.check_grafTorta.get():
             ax.pie([15, 30, 45, 10], labels=['A', 'B', 'C', 'D'], autopct='%1.1f%%', startangle=90)
-
+    
         ax.set_title('Gráfico Moderno', fontsize=18, color='#ffffff')
         ax.legend(facecolor="#1a1a1a", framealpha=0, fontsize=12)
 
