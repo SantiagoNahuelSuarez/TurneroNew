@@ -1,8 +1,11 @@
 #Ventana de Login
 
 import customtkinter as ctk
-from tkinter import messagebox 
-from formularios.Manager import principalscreen
+from tkinter import messagebox
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#from formularios.Manager import principalscreen
 from config import *
 from formularios.screens import billing_point
 import util.util_imagenes as utl_imagenes
@@ -24,7 +27,7 @@ class app(ctk.CTk):
 
             self.destroy()
             
-            principalscreen()
+            #principalscreen()
         else:
             messagebox.showerror(message = "La contraseña no es correcta", title = "Mensaje")
 
@@ -58,7 +61,8 @@ class app(ctk.CTk):
         )
         self.frame_principal.pack(
             expand = True, 
-            fill = ctk.BOTH
+            fill = ctk.BOTH,
+            pady = 0
         )
 
         self.contraseña_frame = ctk.CTkFrame(self.frame_principal, fg_color="transparent")
@@ -75,7 +79,7 @@ class app(ctk.CTk):
             columnspan = 2, 
             row = 1,
             padx = 4, 
-            pady = 20,
+            pady = (1, 20),
             sticky = "n"
         )
 
@@ -96,7 +100,6 @@ class app(ctk.CTk):
             sticky = "n",
             columnspan=2, 
             row = 0,
-            pady = 30
         )
 
         self.iconoUser = ctk.CTkLabel(
@@ -193,8 +196,10 @@ class app(ctk.CTk):
             sticky = "n"              
         )
         self.buttoninicio.bind("<Return>", (lambda event:self.verificar()))
-        
-        self.mainloop()
+
+if __name__ == "__main__":
+    App = app()        
+    App.mainloop()
 
         
 

@@ -52,11 +52,14 @@ class Graficos(ctk.CTk):
 
     def labels(self):
 
+        Font = ctk.CTkFont( family = 'FontAwesome', size = 14 )
+
         self.label_datos = ctk.CTkLabel(
         self.menu_lateral,
         fg_color="transparent",
         text="Datos Estadisticos a seleccionar: ",
-        text_color=COLOR_GRIS_PASTEL_OSCURO
+        text_color=COLOR_GRIS_PASTEL_OSCURO,
+        font = Font
         )
         self.label_datos.grid(row=0, column=0, pady=(20, 5), padx=10, sticky="n")
 
@@ -64,7 +67,8 @@ class Graficos(ctk.CTk):
             self.menu_lateral,
             fg_color="transparent",
             text="Seleccionar grafico: ",
-            text_color=COLOR_GRIS_PASTEL_OSCURO
+            text_color=COLOR_GRIS_PASTEL_OSCURO,
+            font = Font
         )
         self.label_select.grid(row=2, column=0, pady=(50, 5), padx=10, sticky="w")
 

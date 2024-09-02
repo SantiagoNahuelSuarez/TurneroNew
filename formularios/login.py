@@ -76,7 +76,7 @@ class app(ctk.CTk):
             columnspan = 2, 
             row = 1,
             padx = 4, 
-            pady = 20,
+            pady = (1, 20),
             sticky = "n"
         )
 
@@ -97,7 +97,7 @@ class app(ctk.CTk):
             sticky = "n",
             columnspan=2, 
             row = 0,
-            pady = 30
+            pady = 1
         )
 
         self.iconoUser = ctk.CTkLabel(
@@ -118,6 +118,9 @@ class app(ctk.CTk):
             width = 30  
         )
         self.iconContraseña.pack(side="left", padx=(0, 5))
+
+        forgot_password_label = ctk.CTkLabel(self.frame_principal, text="¿Olvidaste tu contraseña?", text_color="#1f6aa5", cursor="hand2")
+        forgot_password_label.grid(row=3, column=1, padx=20, pady=10, sticky="e")
 
     def entrys (self):
 
@@ -196,9 +199,9 @@ class app(ctk.CTk):
         )
         self.buttoninicio.grid(
             row = 4, 
-            column = 0, 
+            columnspan = 2, 
             padx = 20, 
-            pady = 50, 
+            pady = (0, 30), 
             sticky = "n"              
         )
         self.buttoninicio.bind("<Return>", (lambda event:self.verificar()))
