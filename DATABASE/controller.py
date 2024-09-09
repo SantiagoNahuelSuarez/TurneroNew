@@ -32,7 +32,7 @@ def createTables():
             telefono_cliente text references clientes (telefono),
             barbero_id bigint references barberos (id),
             servicio_id bigint references servicio (id),
-            fecha_Agenda bigint reference agenda (fecha),
+            fecha_Agenda date reference agenda (fecha),
             estado text default 'programado'
         )"""
     )

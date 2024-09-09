@@ -48,7 +48,6 @@ class app(ctk.CTk):
         self.title('Login')
         self.iconbitmap("./imagenes/logo.ico")
         self.geometry("500x600+350+20")
-        self.minsize(480, 500)
         self.config(bg = '#010101')
 
     
